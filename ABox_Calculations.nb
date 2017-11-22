@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      2093,         68]
-NotebookOptionsPosition[      1792,         55]
-NotebookOutlinePosition[      2140,         70]
-CellTagsIndexPosition[      2097,         67]
+NotebookDataLength[      2178,         69]
+NotebookOptionsPosition[      1877,         56]
+NotebookOutlinePosition[      2225,         71]
+CellTagsIndexPosition[      2182,         68]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -46,11 +46,12 @@ Cell[BoxData[{
   RowBox[{"StatorCoilLength", " ", "=", " ", "0.12"}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"StatorCoilWidth", " ", "="}], " ", 
-  ";"}], "\[IndentingNewLine]"}], "Input",
+  RowBox[{
+   RowBox[{"StatorCoilWidth", " ", "="}], " ", ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input",
  CellChangeTimes->{{3.7202975159747586`*^9, 3.7202977294227266`*^9}, {
-  3.7203039614459543`*^9, 
-  3.720304012104974*^9}},ExpressionUUID->"8cca37dc-749b-4d68-939a-\
+  3.7203039614459543`*^9, 3.720304012104974*^9}, {3.720304102364641*^9, 
+  3.7203041206130342`*^9}},ExpressionUUID->"8cca37dc-749b-4d68-939a-\
 91bd00a8ffd2"]
 },
 WindowSize->{1920, 997},
@@ -69,7 +70,7 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 1230, 33, 219, "Input",ExpressionUUID->"8cca37dc-749b-4d68-939a-91bd00a8ffd2"]
+Cell[558, 20, 1315, 34, 238, "Input",ExpressionUUID->"8cca37dc-749b-4d68-939a-91bd00a8ffd2"]
 }
 ]
 *)
