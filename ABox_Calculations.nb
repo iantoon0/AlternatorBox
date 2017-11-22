@@ -10,17 +10,51 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[       769,         33]
-NotebookOptionsPosition[       561,         21]
-NotebookOutlinePosition[       909,         36]
-CellTagsIndexPosition[       866,         33]
+NotebookDataLength[      2093,         68]
+NotebookOptionsPosition[      1792,         55]
+NotebookOutlinePosition[      2140,         70]
+CellTagsIndexPosition[      2097,         67]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"RotorSpinRaterps", " ", "=", " ", 
+   RowBox[{"1", "/", "15"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RotorSpinRatedegps", " ", "=", " ", 
+   RowBox[{"RotorSpinRaterps", " ", "*", "360"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"NumRotorPoles", " ", "=", " ", "4"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RotorCurrent", " ", "=", " ", 
+   RowBox[{"1", "/", "3"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"NumRotorTurns", " ", "=", " ", "50"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"NumStatorTurns", " ", "=", " ", "5"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RotorCoilLength", " ", "=", " ", "0.1"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RotorCoilWidth", " ", "="}], " ", ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"StatorCoilLength", " ", "=", " ", "0.12"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"StatorCoilWidth", " ", "="}], " ", 
+  ";"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.7202975159747586`*^9, 3.7202977294227266`*^9}, {
+  3.7203039614459543`*^9, 
+  3.720304012104974*^9}},ExpressionUUID->"8cca37dc-749b-4d68-939a-\
+91bd00a8ffd2"]
 },
-WindowSize->{759, 833},
-WindowMargins->{{Automatic, 572}, {64, Automatic}},
+WindowSize->{1920, 997},
+WindowMargins->{{-8, Automatic}, {Automatic, -8}},
 FrontEndVersion->"11.2 for Microsoft Windows (64-bit) (September 10, 2017)",
 StyleDefinitions->"Default.nb"
 ]
@@ -35,9 +69,8 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
+Cell[558, 20, 1230, 33, 219, "Input",ExpressionUUID->"8cca37dc-749b-4d68-939a-91bd00a8ffd2"]
 }
 ]
 *)
-
-(* End of internal cache information *)
 
