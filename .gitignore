@@ -1,7 +1,7 @@
 *.log
 *.net
 *.raw
-ABox_Window\node_modules\*
+\ABox_Window\node_modules
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
