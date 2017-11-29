@@ -13,6 +13,10 @@ dataRecieved = function(data){
     }
     else{
         currentState = JSON.parse(data);
+        stateQueue.push(currentState);
+        if(stateQueue.length >= 200){
+            stateQueue.shift();
+        }
     }
 };
 
