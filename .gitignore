@@ -4,13 +4,13 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+/ABox_Window/node_modules
 
 # testing
-/coverage
+/ABox_Window/coverage
 
 # production
-/build
+/ABox_Window/build
 
 # misc
 .DS_Store
