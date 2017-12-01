@@ -17,7 +17,7 @@ class BoxState //Holds the various measured components of the box and a time val
     fRotorVoltage = fRotorVoltageVar;
     memcpy(fStatorLoopVoltageArray,fStatorLoopVoltageArrayVar, arr_len(fStatorLoopVoltageArrayVar));
     bBeamBroken = bBeamBrokenVar;
-    currentTime = currentTimeVar;
+    currentTime = currentTimeVar; 
   }
 };
 
@@ -47,7 +47,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   float testArray[] = {0.0f, 0.0f};
-  currentState = *(new BoxState(0.0f, 0.0f, testArray, true, startTime + millis()));
+  currentState = *(new BoxState(readVoltage(aCurrentMeasurePin)*5, 0.0f, testArray, true, startTime + millis()));
 
   //Determine if the rotor is spinning
   if(!bIsTurning){
@@ -61,6 +61,10 @@ void loop() {
     iTurningCheckTimer = millis();
   }
   addStateToList(currentState);
+}
+
+float readVoltage(int pin){
+  return(0.0049 * analogRead(pin))
 }
 
 void addStateToList(BoxState state){

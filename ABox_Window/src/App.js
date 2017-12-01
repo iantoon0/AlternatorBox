@@ -16,6 +16,13 @@ class dataPoint{
   }
 }
 */
+
+class BoxState{
+  constructor(props){
+    var fRotorCurrent, fRotorVoltage, fStatorLoopVoltageArray, bBeamBroken, currentTime;    
+  }
+}
+
 /*
 port.open();
 
@@ -24,32 +31,31 @@ port.on('data', dataRecieved(data)); //When we recieve data, call dataRecieved
 class App extends Component {
   constructor(props){
     super(props);
-    this.state = {bManualRotorCurrent: true, fRotorCurrent:0.0, boxStateQueue:[], chartDisplayData:[], sDataToDisplay:"voltage"}
+    this.state = {bAutoRotorCurrent: true, fRotorCurrent:0.0, boxStateQueue:[], chartDisplayData:[], sDataToDisplay:"voltage"}
     this.currentToggled = this.currentToggled.bind(this);
   }
   
   //Function to call when we recieve data from the CUno
   dataRecieved = function(data){
     if(data === "BEGIN"){
-        //port.write(Date.now());
+      //port.write(Date.now());
     }
     else{
-        currentState = JSON.parse(data);
-        this.state.boxStateQueue.push(currentState);
-        if(this.state.boxStateQueue.length >= 200){
-          this.state.boxStateQueue.shift();
-        }
+      currentState = JSON.parse(data);
+      this.state.boxStateQueue.push(currentState);
+      if(this.state.boxStateQueue.length >= 200){
+        this.state.boxStateQueue.shift();
+      }
     }
 
   };
 
-
   currentToggled(event){
     logString = "Event fired! Value: "+ event.target.checked;
     this.setState({
-      bManualRotorCurrent: event.target.checked
+      bAutoRotorCurrent: event.target.checked
     })
-    if(this.state.bManualRotorCurrent){
+    if(this.state.bAutoRotorCurrent){
       //port.write("")
     }
     else{
@@ -61,7 +67,15 @@ class App extends Component {
     this.setState({
       fRotorCurrent: event.target.value
     })
+  }
 
+  generateChartDisplayData(event){
+    this.state.sDataToDisplay = event.target.value;
+    switch (sDataToDisplay){
+      case "voltage": break;
+      case "rotorcurrent": break;
+    }
+    logString = "Selected display: " + event.target.value;
   }
 
   render() {
@@ -81,9 +95,9 @@ class App extends Component {
           height={250}
           data={this.state.chartDisplayData}
         />
-        <input type="checkbox" onChange={(evt) => this.currentToggled(evt)} checked = {this.state.bManualRotorCurrent}/>Manual rotor current control
-        <input type="number" disabled = {!this.state.bManualRotorCurrent} value = {this.state.fRotorCurrent} onChange={(evt) => this.currentFloatChanged(evt)}/>Amps
-        <select>
+        <input type="checkbox" onChange={(evt) => this.currentToggled(evt)} checked = {this.state.bAutoRotorCurrent}/>Automatic rotor current control
+        <input type="number" disabled = {this.state.bAutoRotorCurrent} value = {this.state.fRotorCurrent} onChange={(evt) => this.currentFloatChanged(evt)}/>Amps
+        <select onChange={(evt) => this.generateChartDisplayData(evt)}>
           <option value="voltage">Voltage</option>
           <option value="rotorcurrent">Rotor current</option>
         </select>
