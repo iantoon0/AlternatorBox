@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import {Checkbox} from './Checkbox';
+import {LineChart} from 'react-easy-chart';
 import logo from './logo.svg';
 import './App.css';
 
@@ -36,6 +38,33 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">AlternatorBox Window</h1>
         </header>
+        <LineChart
+          xType={'time'}
+          datePattern={'%H:%M:%S'}
+          axes
+          grid
+          verticalGrid
+          width={1000}
+          height={250}
+          data={[
+            [
+              { x: '00:00:01', y: 20 },
+              { x: '00:01:01', y: 10 },
+              { x: '00:01:02', y: 33 },
+              { x: '00:04:03', y: 45 },
+              { x: '00:05:04', y: 15 }
+            ]/*, [
+              { x: '00:00', y: 10 },
+              { x: '00:01', y: 15 },
+              { x: '00:02', y: 13 },
+              { x: '00:04', y: 15 },
+              { x: '00:03', y: 10 }
+            ]*/
+          ]}
+        />
+        <Checkbox>
+          Automatic rotor current control
+        </Checkbox>
       </div>
     );
   }
