@@ -71,7 +71,7 @@ class App extends Component {
 
   generateChartDisplayData(event){
     this.state.sDataToDisplay = event.target.value;
-    switch (sDataToDisplay){
+    switch (this.state.sDataToDisplay){
       case "voltage": break;
       case "rotorcurrent": break;
     }
@@ -87,13 +87,26 @@ class App extends Component {
         </header>
         <LineChart
           xType={'time'}
-          datePattern={'%H:%M:%S'}
           axes
           grid
           verticalGrid
           width={1000}
           height={250}
-          data={this.state.chartDisplayData}
+          data={[
+            [
+              { x: '1-Jan-15', y: 20 },
+              { x: '1-Feb-15', y: 10 },
+              { x: '1-Mar-15', y: 33 },
+              { x: '1-Apr-15', y: 45 },
+              { x: '1-May-15', y: 15 }
+            ], [
+              { x: '1-Jan-15', y: 10 },
+              { x: '1-Feb-15', y: 15 },
+              { x: '1-Mar-15', y: 13 },
+              { x: '1-Apr-15', y: 15 },
+              { x: '1-May-15', y: 10 }
+            ]
+          ]}
         />
         <input type="checkbox" onChange={(evt) => this.currentToggled(evt)} checked = {this.state.bAutoRotorCurrent}/>Automatic rotor current control
         <input type="number" disabled = {this.state.bAutoRotorCurrent} value = {this.state.fRotorCurrent} onChange={(evt) => this.currentFloatChanged(evt)}/>Amps
