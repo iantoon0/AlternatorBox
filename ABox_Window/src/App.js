@@ -4,10 +4,10 @@ import logo from './logo.svg';
 import './App.css';
 
 const fs = require('fs');//,
-//raspi = require('raspi'),
-//Serial = require('raspi-serial').Serial;
+raspi = require('raspi'),
+Serial = require('raspi-serial').Serial;
 
-var //port = new Serial({'baudRate':28800}),
+var port = new Serial({'baudRate':28800}),
 currentState, logString="STARTUP LOG";
 /*
 class dataPoint{
@@ -23,11 +23,10 @@ class BoxState{
   }
 }
 
-/*
 port.open();
 
-port.on('data', dataRecieved(data)); //When we recieve data, call dataRecieved
-*/
+port.on('data', App.dataRecieved(data)); //When we recieve data, call dataRecieved
+
 class App extends Component {
   constructor(props){
     super(props);
@@ -46,7 +45,7 @@ class App extends Component {
   //Function to call when we recieve data from the CUno
   dataRecieved = function(data){
     if(data === "BEGIN"){
-      //port.write(Date.now());
+      port.write(Date.now());
     }
     else{
       currentState = JSON.parse(data);
@@ -64,10 +63,10 @@ class App extends Component {
       bAutoRotorCurrent: event.target.checked
     })
     if(this.state.bAutoRotorCurrent){
-      //port.write("")
+      port.write("")
     }
     else{
-      //port.write("")
+      port.write("")
     }
   }
 
