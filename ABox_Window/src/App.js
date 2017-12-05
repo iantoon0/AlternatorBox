@@ -31,7 +31,15 @@ port.on('data', dataRecieved(data)); //When we recieve data, call dataRecieved
 class App extends Component {
   constructor(props){
     super(props);
-    this.state = {bAutoRotorCurrent: true, fRotorCurrent:0.0, boxStateQueue:[], chartDisplayData:[], sDataToDisplay:"voltage"}
+    this.state = {
+      bAutoRotorCurrent: true, 
+      fRotorCurrent:0.0, 
+      boxStateQueue:[], 
+      chartDisplayData:[], 
+      sDataToDisplay:"voltage",
+      sGraphLabelX:"Time",
+      sGraphLabelY:"Voltage (V)"
+    }
     this.currentToggled = this.currentToggled.bind(this);
   }
   
@@ -46,8 +54,8 @@ class App extends Component {
       if(this.state.boxStateQueue.length >= 200){
         this.state.boxStateQueue.shift();
       }
+      this.state.fRotorCurrent=currentState.fRotorCurrent;
     }
-
   };
 
   currentToggled(event){
@@ -64,6 +72,7 @@ class App extends Component {
   }
 
   currentFloatChanged(event){
+    logString = "Event fired! Value: "+ event.target.value;
     this.setState({
       fRotorCurrent: event.target.value
     })
@@ -85,13 +94,14 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">AlternatorBox Window</h1>
         </header>
-        <LineChart
+        <LineChart className = "LineChart-1"
           xType={'time'}
+          axisLabels={{x:this.state.sGraphLabelX,y:this.state.sGraphLabelY}}
           axes
           grid
           verticalGrid
           width={1000}
-          height={250}
+          height={500}
           data={[
             [
               { x: '1-Jan-15', y: 20 },
@@ -108,8 +118,15 @@ class App extends Component {
             ]
           ]}
         />
-        <input type="checkbox" onChange={(evt) => this.currentToggled(evt)} checked = {this.state.bAutoRotorCurrent}/>Automatic rotor current control
-        <input type="number" disabled = {this.state.bAutoRotorCurrent} value = {this.state.fRotorCurrent} onChange={(evt) => this.currentFloatChanged(evt)}/>Amps
+        <div className = "CurrentControl">Rotor Current
+          <div className = "CurrentControlCheckbox">
+            <input type="checkbox" onChange={(evt) => this.currentToggled(evt)} checked = {this.state.bAutoRotorCurrent}/>Automatic rotor current control
+          </div>
+          <input type="number" disabled = {this.state.bAutoRotorCurrent} value = {this.state.fRotorCurrent} onChange={(evt) => this.currentFloatChanged(evt)}/>
+          <select>
+            <option value="A">A</option>
+          </select>
+        </div>
         <select onChange={(evt) => this.generateChartDisplayData(evt)}>
           <option value="voltage">Voltage</option>
           <option value="rotorcurrent">Rotor current</option>
