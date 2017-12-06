@@ -17,6 +17,11 @@ class dataPoint{
 }
 */
 
+
+
+port.open();
+port.on('data', this.dataRecieved()); //When we recieve data, call dataRecieved
+
 class BoxState{
   constructor(props){
     var fRotorCurrent, fRotorVoltage, fStatorLoopVoltageArray, bBeamBroken, currentTime;    
@@ -37,10 +42,6 @@ class App extends Component {
       sGraphLabelY:"Voltage (V)"
     }
     this.currentToggled = this.currentToggled.bind(this);
-
-    port.open();
-
-    port.on('data', this.dataRecieved()); //When we recieve data, call dataRecieved
   }
   
 
@@ -56,7 +57,7 @@ class App extends Component {
         this.state.boxStateQueue.shift();
       }
       this.setState({
-	fRotorCurrent:currentState.fRotorCurrent
+	      fRotorCurrent:currentState.fRotorCurrent
       })
     }
   };
