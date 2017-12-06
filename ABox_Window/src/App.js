@@ -3,7 +3,7 @@ import {LineChart} from 'react-easy-chart';
 import logo from './logo.svg';
 import './App.css';
 
-const fs = require('fs');//,
+const fs = require('fs'),
 raspi = require('raspi'),
 Serial = require('raspi-serial').Serial;
 
@@ -23,9 +23,6 @@ class BoxState{
   }
 }
 
-port.open();
-
-port.on('data', App.dataRecieved(data)); //When we recieve data, call dataRecieved
 
 class App extends Component {
   constructor(props){
@@ -40,8 +37,13 @@ class App extends Component {
       sGraphLabelY:"Voltage (V)"
     }
     this.currentToggled = this.currentToggled.bind(this);
+
+    port.open();
+
+    port.on('data', this.dataRecieved()); //When we recieve data, call dataRecieved
   }
   
+
   //Function to call when we recieve data from the CUno
   dataRecieved = function(data){
     if(data === "BEGIN"){
@@ -53,7 +55,9 @@ class App extends Component {
       if(this.state.boxStateQueue.length >= 200){
         this.state.boxStateQueue.shift();
       }
-      this.state.fRotorCurrent=currentState.fRotorCurrent;
+      this.setState({
+	fRotorCurrent:currentState.fRotorCurrent
+      })
     }
   };
 
@@ -78,7 +82,9 @@ class App extends Component {
   }
 
   generateChartDisplayData(event){
-    this.state.sDataToDisplay = event.target.value;
+    this.setState({
+      sDataToDisplay: event.target.value
+    })
     switch (this.state.sDataToDisplay){
       case "voltage": break;
       case "rotorcurrent": break;
