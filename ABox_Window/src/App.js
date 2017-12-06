@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import {LineChart} from 'react-easy-chart';
 import logo from './logo.svg';
 import './App.css';
+import openSocket from 'socket.io-client';
 
-const fs = require('fs'),
-raspi = require('raspi'),
-Serial = require('raspi-serial').Serial;
+const socket = openSocket('http://localhost:8000');
+fs = require('fs');
 
-var port = new Serial({'baudRate':28800}),
-currentState, logString="STARTUP LOG";
+var currentState, logString="STARTUP LOG";
 /*
 class dataPoint{
   constructor(){
@@ -18,9 +17,6 @@ class dataPoint{
 */
 
 
-
-port.open();
-port.on('data', this.dataRecieved()); //When we recieve data, call dataRecieved
 
 class BoxState{
   constructor(props){
@@ -48,7 +44,7 @@ class App extends Component {
   //Function to call when we recieve data from the CUno
   dataRecieved = function(data){
     if(data === "BEGIN"){
-      port.write(Date.now());
+      //FILL IN
     }
     else{
       currentState = JSON.parse(data);
@@ -68,10 +64,10 @@ class App extends Component {
       bAutoRotorCurrent: event.target.checked
     })
     if(this.state.bAutoRotorCurrent){
-      port.write("")
+      //WRITE TO PORT
     }
     else{
-      port.write("")
+      //WRITE TO PORT
     }
   }
 
