@@ -51,6 +51,7 @@ class App extends Component {
     else{
       logString = data;
       currentState = JSON.parse(data);
+      console.log(data);
       this.state.boxStateQueue.push(currentState);
       if(this.state.boxStateQueue.length >= 200){
         this.state.boxStateQueue.shift();
