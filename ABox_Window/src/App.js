@@ -5,7 +5,6 @@ import './App.css';
 import openSocket from 'socket.io-client';
 
 const socket = openSocket('http://localhost:8080');
-fs = require('fs');
 
 var currentState, logString="STARTUP LOG";
 /*
@@ -39,7 +38,7 @@ class App extends Component {
     }
     this.currentToggled = this.currentToggled.bind(this);
     socket.on("Data", (data)=> {
-      dataRecieved(data);
+      this.dataRecieved(data);
     });
   }
   
