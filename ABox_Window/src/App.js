@@ -4,7 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 import openSocket from 'socket.io-client';
 
-const socket = openSocket('http://localhost:8000');
+const socket = openSocket('http://localhost:8080');
 fs = require('fs');
 
 var currentState, logString="STARTUP LOG";
@@ -38,6 +38,9 @@ class App extends Component {
       sGraphLabelY:"Voltage (V)"
     }
     this.currentToggled = this.currentToggled.bind(this);
+    socket.on("Data", (data)=> {
+      dataRecieved(data);
+    });
   }
   
 
@@ -64,6 +67,7 @@ class App extends Component {
       bAutoRotorCurrent: event.target.checked
     })
     if(this.state.bAutoRotorCurrent){
+      socket.emit("DataChanged", this.state)
       //WRITE TO PORT
     }
     else{

@@ -4,7 +4,7 @@ fs = require('fs'),
 raspi = require('raspi'),
 Serial = require('raspi-serial').Serial;
 
-var serialPort = new Serial({'baudRate':28800}),
+var serialPort = new Serial({'baudRate':19200}),
 server=http.createServer(),
 clientSocket,
 dataToSend,
@@ -30,7 +30,7 @@ const EmitData = async socket => {
 io.on('connection', (client) => {
     // here you can start emitting events to the client 
     clientSocket = client;
-    client.on("DataChanged",function(){
+    client.on("DataChanged",(clientState)=>{
 
     });
 });
