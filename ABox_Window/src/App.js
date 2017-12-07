@@ -49,6 +49,7 @@ class App extends Component {
       //FILL IN
     }
     else{
+      logString = data;
       currentState = JSON.parse(data);
       this.state.boxStateQueue.push(currentState);
       if(this.state.boxStateQueue.length >= 200){

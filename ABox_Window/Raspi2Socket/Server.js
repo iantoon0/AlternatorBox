@@ -28,11 +28,13 @@ const EmitData = async socket => {
     }
 };
 io.on('connection', (client) => {
-    // here you can start emitting events to the client 
+    // here you can start emitting events to the client
+    console.log("Client connected!"); 
     clientSocket = client;
-    client.on("DataChanged",(clientState)=>{
+    clientSocket.on("DataChanged",(clientState)=>{
 
     });
+    EmitData(clientSocket, '{"fRotorCurrent":1.0}');
 });
 const port = 8080;
 io.listen(port);
