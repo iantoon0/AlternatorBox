@@ -5,29 +5,37 @@
 
 class BoxState //Holds the various measured components of the box and a time value synced with 
 {
-  public: float fRotorCurrent, fRotorVoltage, fStatorLoopVoltageArray[];
+  public: float fRotorCurrent, fRotorVoltage, fStatorLoopVoltageArray[], fOutputVoltage;
   public: bool bBeamBroken;
   public: unsigned long currentTime;
+  public: int stateMillis;
   public: BoxState(){
     
   };
-  public: BoxState(float fRotorCurrentVar, float fRotorVoltageVar, float fStatorLoopVoltageArrayVar[], bool bBeamBrokenVar, long currentTimeVar)
+  public: BoxState(float fRotorCurrentVar, float fRotorVoltageVar, float fOutputVoltageVar, float fStatorLoopVoltageArrayVar[], bool bBeamBrokenVar, long currentTimeVar)
   {
     fRotorCurrent = fRotorCurrentVar;
     fRotorVoltage = fRotorVoltageVar;
+    fOutputVoltage = fOutputVoltageVar;
     memcpy(fStatorLoopVoltageArray,fStatorLoopVoltageArrayVar, arr_len(fStatorLoopVoltageArrayVar));
     bBeamBroken = bBeamBrokenVar;
     currentTime = currentTimeVar; 
   }
 };
 
+class ControlState
+{
+  public: float fCurrentTarget;
+  public: bool bAutoCurrent;
+};
+
 int iVoltageOutput;
-float fRotorCurrent, fVoltageOutput;
+float fRotorCurrent, fVoltageOutput, fPrevCurrentTarget;
 int iLCDOutputType; //1: rotor current 2: Stator voltage 3: Generated Power
-int dRotorOutputPin = 2, aCurrentMeasurePin=1, aStatorVoltagePinArray[] = {1,2,3,4}, aBatteryPin = 5;
+int dRotorOutputPin = 2, aCurrentMeasurePin=1, aStatorVoltagePinArray[] = {1,2}, aTotalOutputPin = 0, aBatteryPin = 5;
 BoxState currentState, prevState;
-QueueArray<BoxState> statesList;
 unsigned long startTimeSeconds;
+ControlState currentCtrlState;
 int startTimeMillis;
 byte timeBuffer[4];
 bool bIsTurning;
@@ -41,37 +49,52 @@ void setup() {
   while(Serial.available()<4){
     delay(100);
   }
-  Serial.readBytes(timeBuffer, 4);
-  startTimeSeconds = 0;
-  Serial.println(timeBuffer[0]);
-  Serial.println(timeBuffer[1]);
-  Serial.println(timeBuffer[2]);
-  Serial.println(timeBuffer[3]);
-  startTimeSeconds += timeBuffer[0] << 24;
-  startTimeSeconds += timeBuffer[1] << 16;
-  startTimeSeconds += timeBuffer[2] << 8;
-  startTimeSeconds += timeBuffer[3];
+  startTimeSeconds = Serial.parseInt();
   Serial.print(startTimeSeconds);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   float testArray[] = {0.0f, 0.0f};
-  currentState = *(new BoxState(readVoltage(aCurrentMeasurePin)*5, 0.0f, testArray, true, startTimeSeconds + millis()));
+  currentState = *(new BoxState(readVoltage(aCurrentMeasurePin), 0.0f, readVoltage(aTotalOutputPin), testArray, true, startTimeSeconds + (millis() / 1000)));
 
   //Determine if the rotor is spinning
   
-  analogWrite(dRotorOutputPin,127);
   //Set the rotor current
   if(checkRotorSpinning()){
     analogWrite(dRotorOutputPin,/*getRotorControlPWM()*/ 127);
   }
-  
-  addStateToList(currentState);
+
+  DynamicJsonBuffer jsonBuffer;
+  JsonArray& root = jsonBuffer.createArray();
+  JsonObject& currentBoxState = root.createNestedObject().createNestedObject("currentState");
+  currentBoxState["fRotorCurrent"] = currentState.fRotorCurrent;
+  currentBoxState["fRotorVoltage"] = currentState.fRotorVoltage;
+  currentBoxState["bBeamBroken"] = currentState.bBeamBroken;
+  currentBoxState["currentTime"] = currentState.currentTime;
+  currentBoxState["stateMillis"] = millis()%1000;
+  root.printTo(Serial);
+  Serial.println();
 }
 
 int getRotorControlPWM(){
-  
+  if(&prevState){
+    if(getDifference(prevState.fRotorCurrent, currentCtrlState.fCurrentTarget)<=0.1){
+      prev
+    }
+  }
+  else{
+    return 127;
+  }
+}
+
+float getDifference(float one, float two){
+  if(one > two){
+    return one-two;
+  }
+  else{
+    return two-one;
+  }
 }
 
 float readVoltage(int pin){
@@ -90,16 +113,6 @@ bool checkRotorSpinning(){
     iTurningCheckTimer = millis();
   }
   return bIsTurning;
-}
-
-void addStateToList(BoxState state){
-  if(statesList.count()>=100){
-    statesList.pop();
-    statesList.push(state);
-  }
-  else{
-    statesList.push(state);
-  }
 }
 
 

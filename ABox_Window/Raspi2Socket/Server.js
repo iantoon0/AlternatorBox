@@ -23,6 +23,7 @@ dataRecieved = function(data){
 const EmitData = async socket => {
     try {
       socket.emit("Data", dataToSend); // Emitting a new message. It will be consumed by the client
+      console.log("Sending data: " + dataToSend);
     } catch (error) {
       console.error(`Error: ${error.code}`);
     }
@@ -34,7 +35,6 @@ io.on('connection', (client) => {
     clientSocket.on("DataChanged",(clientState)=>{
 
     });
-    EmitData(clientSocket, '{"fRotorCurrent":1.0}');
 });
 const port = 8080;
 io.listen(port);

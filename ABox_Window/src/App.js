@@ -19,7 +19,13 @@ class dataPoint{
 
 class BoxState{
   constructor(props){
-    var fRotorCurrent, fRotorVoltage, fStatorLoopVoltageArray, bBeamBroken, currentTime;    
+    var fMotorVoltage, fBatteryVoltage, bBeamBroken, seconds, milliseconds;    
+  }
+}
+
+class ControlState{
+  constructor(fMotorVoltageTargetVar, bMotorIsClockwiseVar){
+    var fMotorVoltageTarget= fMotorVoltageTargetVar, bMotorIsClockwise=bMotorIsClockwiseVar; 
   }
 }
 
@@ -27,16 +33,14 @@ class BoxState{
 class App extends Component {
   constructor(props){
     super(props);
-    this.state = {
-      bAutoRotorCurrent: true, 
-      fRotorCurrent:0.0, 
+    this.state = { 
+      bMotorIsClockwise,
+      fMotorVoltage:0.0, 
       boxStateQueue:[], 
       chartDisplayData:[], 
-      sDataToDisplay:"voltage",
       sGraphLabelX:"Time",
       sGraphLabelY:"Voltage (V)"
     }
-    this.currentToggled = this.currentToggled.bind(this);
     socket.on("Data", (data)=> {
       this.dataRecieved(data);
     });
@@ -45,42 +49,30 @@ class App extends Component {
 
   //Function to call when we recieve data from the CUno
   dataRecieved = function(data){
-    if(data === "BEGIN"){
-      //FILL IN
+    logString = data;
+    currentState = JSON.parse(data);
+    console.log(data);
+    this.state.boxStateQueue.push(currentState);
+    if(this.state.boxStateQueue.length >= 200){
+      this.state.boxStateQueue.shift();
     }
-    else{
-      logString = data;
-      currentState = JSON.parse(data);
-      console.log(data);
-      this.state.boxStateQueue.push(currentState);
-      if(this.state.boxStateQueue.length >= 200){
-        this.state.boxStateQueue.shift();
-      }
-      this.setState({
-	      fRotorCurrent:currentState.fRotorCurrent
-      })
-    }
+    this.setState({
+	    fRotorCurrent:currentState.fRotorCurrent
+    });
   };
 
-  currentToggled(event){
-    logString = "Event fired! Value: "+ event.target.checked;
-    this.setState({
-      bAutoRotorCurrent: event.target.checked
-    })
-    if(this.state.bAutoRotorCurrent){
-      socket.emit("DataChanged", this.state)
-      //WRITE TO PORT
-    }
-    else{
-      //WRITE TO PORT
-    }
-  }
-
-  currentFloatChanged(event){
+  voltageFloatChanged(event){
     logString = "Event fired! Value: "+ event.target.value;
     this.setState({
-      fRotorCurrent: event.target.value
+      fMotorVoltage: event.target.value
     })
+  }
+
+  flipButtons(event){
+    this.setState({
+      bMotorIsClockwise: !bMotorIsClockwise
+    })
+    sendControlState();
   }
 
   generateChartDisplayData(event){
@@ -92,6 +84,9 @@ class App extends Component {
       case "rotorcurrent": break;
     }
     logString = "Selected display: " + event.target.value;
+  }
+  sendControlState(){
+    socket.emit("CTRLSTATE", new ControlState())
   }
 
   render() {
@@ -125,20 +120,13 @@ class App extends Component {
             ]
           ]}
         />
-        <div className = "CurrentControl">Rotor Current
-          <div className = "CurrentControlCheckbox">
-            <input type="checkbox" onChange={(evt) => this.currentToggled(evt)} checked = {this.state.bAutoRotorCurrent}/>Automatic rotor current control
-          </div>
-          <input type="number" disabled = {this.state.bAutoRotorCurrent} value = {this.state.fRotorCurrent} onChange={(evt) => this.currentFloatChanged(evt)}/>
+        <div className = "VoltageControl">Motor Voltage
+          <button onClick={(evt)=>this.}>Flip Motor Direction</button>
+          <input type="number" value = {this.state.fMotorVoltage} onChange={(evt) => this.voltageFloatChanged(evt)}/>
           <select>
             <option value="A">A</option>
           </select>
         </div>
-        <select onChange={(evt) => this.generateChartDisplayData(evt)}>
-          <option value="voltage">Voltage</option>
-          <option value="rotorcurrent">Rotor current</option>
-        </select>
-        <h1/>{logString}
       </div>
     );
   }
