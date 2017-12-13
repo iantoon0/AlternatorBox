@@ -19,22 +19,28 @@ class dataPoint{
 
 class BoxState{
   constructor(props){
-    var fMotorVoltage, fBatteryVoltage, bBeamBroken, seconds, milliseconds;    
+    var fGeneratorOutputVoltage, fBatteryVoltage, bBeamBroken, seconds, milliseconds;    
   }
 }
 
 class ControlState{
-  constructor(fMotorVoltageTargetVar, bMotorIsClockwiseVar){
-    var fMotorVoltageTarget= fMotorVoltageTargetVar, bMotorIsClockwise=bMotorIsClockwiseVar; 
+  constructor(props){
+    var fMotorVoltageTarget; 
   }
 }
 
+class dataPoint{
+  constructor(xVar, yVar){
+    var x = xVar, y=yVar;
+  }
+}
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state = { 
-      bMotorIsClockwise,
+      fMotorFrequency:0.0,
+      fBatteryVoltage: 0.0,
       fMotorVoltage:0.0, 
       boxStateQueue:[], 
       chartDisplayData:[], 
@@ -51,42 +57,49 @@ class App extends Component {
   dataRecieved = function(data){
     logString = data;
     currentState = JSON.parse(data);
+    this.setState({
+      fBatteryVoltage: currentState.fBatteryVoltage,
+    })
     console.log(data);
     this.state.boxStateQueue.push(currentState);
     if(this.state.boxStateQueue.length >= 200){
       this.state.boxStateQueue.shift();
     }
-    this.setState({
-	    fRotorCurrent:currentState.fRotorCurrent
-    });
-  };
+    if(this.state.boxStateQueue.length >=5){
+      var timeDiffSum = 0.0, beamBrokenPoints = [];
+      for(var i =0; i<this.state.boxStateQueue.length, i++;){
+        if(this.state.boxStateQueue[i].bBeamBroken){
+          beamBrokenPoints.add(i);
+        }
+      }
+      for(var i = 1; i<beamBrokenPoints.length, i++;){
+        timeDiffSum += (this.state.boxStateQueue[beamBrokenPoints[i]].seconds - this.state.boxStateQueue[beamBrokenPoints[i-1]].seconds);
+        timeDiffSum += (this.state.boxStateQueue[beamBrokenPoints[i]].milliseconds - this.state.boxStateQueue[beamBrokenPoints[i-1]].milliseconds)/1000;
+      }
+      var timeDiffAvg = timeDiffSum/(beamBrokenPoints.length-1);
+      this.setState({
+        fMotorFrequency: 1/timeDiffAvg
+      });
+    }
+  }
 
   voltageFloatChanged(event){
     logString = "Event fired! Value: "+ event.target.value;
     this.setState({
       fMotorVoltage: event.target.value
     })
-  }
-
-  flipButtons(event){
-    this.setState({
-      bMotorIsClockwise: !bMotorIsClockwise
-    })
-    sendControlState();
+    socket.emit("CTRLSTATE", "VOLTAGE:" + this.state.fMotorVoltage);
   }
 
   generateChartDisplayData(event){
+    var displayData = [];
+    this.state.boxStateQueue.forEach(function(element) {
+      displayData.add(new dataPoint(element.seconds * 1000 + element.milliseconds, element.fGeneratorOutputVoltage));
+    }, this);
     this.setState({
-      sDataToDisplay: event.target.value
-    })
-    switch (this.state.sDataToDisplay){
-      case "voltage": break;
-      case "rotorcurrent": break;
-    }
-    logString = "Selected display: " + event.target.value;
-  }
-  sendControlState(){
-    socket.emit("CTRLSTATE", new ControlState())
+      sDataToDisplay: event.target.value,
+      chartDisplayData: displayData
+    });
   }
 
   render() {
@@ -104,28 +117,17 @@ class App extends Component {
           verticalGrid
           width={1000}
           height={500}
-          data={[
-            [
-              { x: '1-Jan-15', y: 20 },
-              { x: '1-Feb-15', y: 10 },
-              { x: '1-Mar-15', y: 33 },
-              { x: '1-Apr-15', y: 45 },
-              { x: '1-May-15', y: 15 }
-            ], [
-              { x: '1-Jan-15', y: 10 },
-              { x: '1-Feb-15', y: 15 },
-              { x: '1-Mar-15', y: 13 },
-              { x: '1-Apr-15', y: 15 },
-              { x: '1-May-15', y: 10 }
-            ]
-          ]}
+          data={this.state.chartDisplayData}
         />
         <div className = "VoltageControl">Motor Voltage
-          <button onClick={(evt)=>this.}>Flip Motor Direction</button>
           <input type="number" value = {this.state.fMotorVoltage} onChange={(evt) => this.voltageFloatChanged(evt)}/>
-          <select>
-            <option value="A">A</option>
-          </select>
+        </div>
+        <div className = "MotorFrequency">Motor Frequency: 
+          <input type = "number" value = {this.state.fMotorFrequency} disabled = {true}/>  
+        </div>
+        <div className = "BatteryVoltage">Battery Voltage: 
+          <input type = "number" value = {this.state.fBatteryVoltage} disabled = {true}/>
+          <h1>{logString}</h1>
         </div>
       </div>
     );
