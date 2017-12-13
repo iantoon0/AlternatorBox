@@ -55,12 +55,14 @@ class App extends Component {
 
   //Function to call when we recieve data from the CUno
   dataRecieved = function(data){
-    logString = data;
-    currentState = JSON.parse(data);
+    if(JSON.parse(data)[0]){
+      currentState = JSON.parse(data)[0].currentState;
+    }
     this.setState({
       fBatteryVoltage: currentState.fBatteryVoltage,
-    })
-    console.log(data);
+      fGeneratorOutputVoltage: currentState.fGeneratorOutputVoltage,
+    });
+    /*
     this.state.boxStateQueue.push(currentState);
     if(this.state.boxStateQueue.length >= 200){
       this.state.boxStateQueue.shift();
@@ -72,15 +74,16 @@ class App extends Component {
           beamBrokenPoints.add(i);
         }
       }
-      for(var i = 1; i<beamBrokenPoints.length, i++;){
-        timeDiffSum += (this.state.boxStateQueue[beamBrokenPoints[i]].seconds - this.state.boxStateQueue[beamBrokenPoints[i-1]].seconds);
-        timeDiffSum += (this.state.boxStateQueue[beamBrokenPoints[i]].milliseconds - this.state.boxStateQueue[beamBrokenPoints[i-1]].milliseconds)/1000;
+      logString = "BeamBrokenPoints[1]: " + beamBrokenPoints[1];
+      for(var n = 1; n<beamBrokenPoints.length, n++;){
+        //timeDiffSum += (this.state.boxStateQueue[beamBrokenPoints[n]].seconds - this.state.boxStateQueue[beamBrokenPoints[n-1]].seconds);
+        //timeDiffSum += (this.state.boxStateQueue[beamBrokenPoints[n]].milliseconds - this.state.boxStateQueue[beamBrokenPoints[n-1]].milliseconds)/1000;
       }
       var timeDiffAvg = timeDiffSum/(beamBrokenPoints.length-1);
       this.setState({
         fMotorFrequency: 1/timeDiffAvg
       });
-    }
+    }*/
   }
 
   voltageFloatChanged(event){
@@ -109,25 +112,12 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">AlternatorBox Window</h1>
         </header>
-        <LineChart className = "LineChart-1"
-          xType={'time'}
-          axisLabels={{x:this.state.sGraphLabelX,y:this.state.sGraphLabelY}}
-          axes
-          grid
-          verticalGrid
-          width={1000}
-          height={500}
-          data={this.state.chartDisplayData}
-        />
+        <div className = "OutputVoltage">Motor output: {this.state.fGeneratorOutputVoltage} V </div>
         <div className = "VoltageControl">Motor Voltage
           <input type="number" value = {this.state.fMotorVoltage} onChange={(evt) => this.voltageFloatChanged(evt)}/>
         </div>
-        <div className = "MotorFrequency">Motor Frequency: 
-          <input type = "number" value = {this.state.fMotorFrequency} disabled = {true}/>  
-        </div>
         <div className = "BatteryVoltage">Battery Voltage: 
           <input type = "number" value = {this.state.fBatteryVoltage} disabled = {true}/>
-          <h1>{logString}</h1>
         </div>
       </div>
     );
@@ -139,6 +129,20 @@ export default App;
 
 
 /*
+
+        <div className = "MotorFrequency">Motor Frequency: 
+          <input type = "number" value = {this.state.fMotorFrequency} disabled = {true}/>  
+        </div>
+<LineChart className = "LineChart-1"
+          xType={'time'}
+          axisLabels={{x:this.state.sGraphLabelX,y:this.state.sGraphLabelY}}
+          axes
+          grid
+          verticalGrid
+          width={1000}
+          height={500}
+          data={this.state.chartDisplayData}
+        />
 <LineChart
           xType={'time'}
           datePattern={'%H:%M:%S'}
